@@ -144,7 +144,7 @@ export default {
 
 .spa-conteiner__inputs {
   display: flex;
-  width: 700px;
+  width: 600px;
   height: 200px;
   justify-content: space-between;
   align-items: center;
