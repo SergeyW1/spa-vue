@@ -23,22 +23,6 @@
           </div>
           <div class="currency-fields">
             <div class="select-wrapper">
-              <h4>From</h4>
-              <select
-                v-if="isSelectLoading"
-                class="select"
-                name="Tos"
-                v-model="from"
-              >
-                <option v-for="(item, name, index) in currencies" :key="index">
-                  {{ name }} - {{ item }}
-                </option>
-              </select>
-              <select v-else class="select">
-                <option value="" selected>loading...</option>
-              </select>
-            </div>
-            <div class="select-wrapper">
               <h4>To</h4>
               <select
                 v-if="isSelectLoading"
@@ -54,9 +38,28 @@
                 <option value="" selected>loading...</option>
               </select>
             </div>
+            <div class="select-wrapper">
+              <h4>From</h4>
+              <select
+                v-if="isSelectLoading"
+                class="select"
+                name="Tos"
+                v-model="from"
+              >
+                <option v-for="(item, name, index) in currencies" :key="index">
+                  {{ name }} - {{ item }}
+                </option>
+              </select>
+              <select v-else class="select">
+                <option value="" selected>loading...</option>
+              </select>
+            </div>
           </div>
         </div>
         <div class="add-convert">
+          <div class="current-exchange" v-if="currentExchange">
+            {{ currentExchanges() }}
+          </div>
           <button class="btn" @click="fetchConverter">Convert</button>
         </div>
       </div>
@@ -70,6 +73,7 @@ export default {
   data() {
     return {
       currencies: [],
+      currentExchange: false,
       isPostsLoading: true,
       isSelectLoading: true,
       convert: "",
@@ -86,6 +90,11 @@ export default {
     };
   },
   methods: {
+    currentExchanges() {
+      return `${this.amount} ${this.from.split("").slice(0, 3).join("")} ${
+        this.convert
+      }`;
+    },
     async fetchConverter() {
       this.isPostsLoading = false;
       try {
@@ -99,7 +108,7 @@ export default {
       } catch (e) {
         console.log("Error", e);
       } finally {
-        this.load = true;
+        this.currentExchange = true;
         this.isPostsLoading = true;
       }
     },
@@ -248,7 +257,7 @@ export default {
 }
 
 .entry-field__title {
-  margin-top: 14px;
+  margin-top: 30px;
   display: flex;
   justify-content: flex-start;
   font-weight: 600;
