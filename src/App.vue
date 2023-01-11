@@ -10,7 +10,6 @@
             <div>
               <h4>Amount</h4>
               <input class="input" type="text" v-model.number="amount" />
-              <p class="currency-symbol">{{ currency }}</p>
             </div>
             <div v-if="isPostsLoading" class="entry-field__title">
               <p class="entry-field__name">
@@ -74,7 +73,6 @@ export default {
       isPostsLoading: true,
       isSelectLoading: true,
       convert: "",
-      currency: "",
       amount: "1",
       to: "RUB - Russian Ruble",
       from: "USD - United States Dollar",
@@ -175,16 +173,9 @@ export default {
 }
 
 .entry-field {
-  position: relative;
   display: flex;
   flex-direction: column;
   height: 80%;
-}
-
-.currency-symbol {
-  position: absolute;
-  top: 34px;
-  left: 3px;
 }
 
 .currency-fields {
