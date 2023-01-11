@@ -25,18 +25,34 @@
           <div class="currency-fields">
             <div class="select-wrapper">
               <h4>From</h4>
-              <select class="select" name="To" v-model="from">
+              <select
+                v-if="isSelectLoading"
+                class="select"
+                name="Tos"
+                v-model="from"
+              >
                 <option v-for="(item, name, index) in currencies" :key="index">
                   {{ name }} - {{ item }}
                 </option>
               </select>
+              <select v-else class="select">
+                <option value="" selected>loading...</option>
+              </select>
             </div>
             <div class="select-wrapper">
               <h4>To</h4>
-              <select class="select" name="From" v-model="to">
+              <select
+                v-if="isSelectLoading"
+                class="select"
+                name="From"
+                v-model="to"
+              >
                 <option v-for="(item, name, index) in currencies" :key="index">
                   {{ name }} - {{ item }}
                 </option>
+              </select>
+              <select v-else class="select">
+                <option value="" selected>loading...</option>
               </select>
             </div>
           </div>
@@ -56,6 +72,7 @@ export default {
     return {
       currencies: [],
       isPostsLoading: true,
+      isSelectLoading: true,
       convert: "",
       currency: "",
       amount: "1",
@@ -65,7 +82,7 @@ export default {
         method: "GET",
         redirect: "follow",
         headers: {
-          apikey: "qqkplrTOZqyPrFhE6689ZF6MceOHaFsO",
+          apikey: "jtdVTZag9x3ks293RWNmshZYpjgERq8t",
         },
       },
     };
@@ -89,6 +106,7 @@ export default {
       }
     },
     async fetchCurrencies() {
+      this.isSelectLoading = false;
       try {
         const response = await axios(
           "https://api.apilayer.com/currency_data/list",
@@ -97,6 +115,8 @@ export default {
         this.currencies = await response.data.currencies;
       } catch (e) {
         alert("error async", e);
+      } finally {
+        this.isSelectLoading = true;
       }
     },
   },
