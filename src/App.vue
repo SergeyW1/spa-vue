@@ -28,7 +28,7 @@
                 <option
                   v-for="item in currencies"
                   :key="item.currencies"
-                  selected
+                  :value="item.code"
                 >
                   {{ item.code }} - {{ item.description }}
                 </option>
@@ -40,7 +40,7 @@
                 <option
                   v-for="item in currencies"
                   :key="item.currencies"
-                  selected
+                  :value="item.code"
                 >
                   {{ item.code }} - {{ item.description }}
                 </option>
@@ -50,11 +50,10 @@
         </div>
         <div class="add-convert">
           <div class="current-exchange" v-show="currentExchange">
-            {{ currentFirstCurrency() }}
+            <div>{{ amount }} {{ from }} = {{ convert }}</div>
           </div>
           <div class="btn-addFetch">
             <button class="btn" @click="fetchConverter">Convert</button>
-            <button class="btn" @click="fetchCurrencyList">Fetch</button>
           </div>
         </div>
       </div>
@@ -68,40 +67,30 @@ export default {
   data() {
     return {
       currencies: [],
+      baseCurrencies: [],
       currentExchange: false,
-      text: "",
       isPostsLoading: true,
       isSelectLoading: true,
-      convertNum: 0,
       convert: "",
       amount: "1",
-      to: "RUB - Russian Ruble",
-      from: "USD - United States Dollar",
+      to: "RUB",
+      from: "USD",
     };
   },
   methods: {
-    currentFirstCurrency() {
-      return `${this.amount} 
-				${this.from.split("").slice(0, 3).join("")} = 
-				${this.convertNum.toFixed(2)} 
-				${this.to.split("").slice(0, 3).join("")}`;
-    },
-    currentSecondCurrency() {
-      return `${this.amount} 
-				${this.from.split("").slice(0, 3).join("")} = 
-				${this.convertNum.toFixed(2)} 
-				${this.to.split("").slice(0, 3).join("")}`;
-    },
     async fetchConverter() {
       this.isPostsLoading = false;
       try {
         const amountNumber = this.amount;
-        const toCurrency = this.to.split("").slice(0, 3).join("");
-        const fromCurrency = this.from.split("").slice(0, 3).join("");
-        const response = await axios(
+        const toCurrency = this.to;
+        const fromCurrency = this.from;
+        const response = await axios.get(
           `https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amountNumber}`
         );
-        this.convertNum = await response.data.result;
+        const responseBaseCurrency = await axios.get(
+          `https://api.exchangerate.host/latest?base=${fromCurrency}`
+        );
+        console.log(responseBaseCurrency);
         this.convert = (await response.data.result) + " " + toCurrency;
       } catch (e) {
         console.log("Error", e);
@@ -112,8 +101,9 @@ export default {
     },
     async fetchCurrencyList() {
       try {
-        const response = await axios("https://api.exchangerate.host/symbols");
-        console.log(response.data.symbols);
+        const response = await axios.get(
+          "https://api.exchangerate.host/symbols"
+        );
         this.currencies = response.data.symbols;
       } catch (e) {
         alert("List Error", e);
