@@ -91,7 +91,8 @@ export default {
           `https://api.exchangerate.host/latest?base=${fromCurrency}`
         );
         console.log(responseBaseCurrency);
-        this.convert = (await response.data.result) + " " + toCurrency;
+        this.convert =
+          (await response.data.result).toFixed(4) + " " + toCurrency;
       } catch (e) {
         console.log("Error", e);
       } finally {
