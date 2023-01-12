@@ -50,11 +50,19 @@
         </div>
         <div class="add-convert">
           <div class="current-exchange" v-show="currentExchange">
-            <div>{{ amount }} {{ from }} = {{ convert }}</div>
+            <div v-for="(item, index) in defaultCurrencies" :key="index">
+              <div class="current-exchange__item">
+                {{ amount }} {{ item.name }} = {{ item.num }} {{ to }}
+              </div>
+            </div>
           </div>
-          <div class="btn-addFetch">
-            <button class="btn" @click="fetchConverter">Convert</button>
+          <div :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch2'">
+            <!-- <button class="btn" @click="fetchConverter">Convert</button> -->
+            <button class="btn" @click="fetchConverted">fetchConverted</button>
           </div>
+        </div>
+        <div v-for="item in baseCurrencies" :key="item.baseCurrencies">
+          <p>{{ item.USD }}</p>
         </div>
       </div>
     </div>
@@ -75,29 +83,62 @@ export default {
       amount: "1",
       to: "RUB",
       from: "USD",
+      fromEuro: "EUR",
+      fromUSD: "USD",
+      defaultCurrencies: [],
+      list: [],
     };
   },
   methods: {
-    async fetchConverter() {
-      this.isPostsLoading = false;
+    // async fetchConverter() {
+    //   this.isPostsLoading = false;
+    //   try {
+    //     const amountNumber = this.amount;
+    //     const toCurrency = this.to;
+    //     const fromCurrency = this.from;
+    //     const response = await axios.get(
+    //       `https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amountNumber}`
+    //     );
+    //     const responseEuro = await axios.get(
+    //       `https://api.exchangerate.host/convert?from=${this.fromEuro}&to=${toCurrency}&amount=${amountNumber}`
+    //     );
+    //     const responseUSD = await axios.get(
+    //       `https://api.exchangerate.host/convert?from=${this.fromUSD}&to=${toCurrency}&amount=${amountNumber}`
+    //     );
+
+    //     const list = await axios.get(`https://api.exchangerate.host/latest`);
+    //     console.log(list.data);
+    //     console.log("rates:", list.data.rates);
+    //     this.list = list.data;
+    //     console.log(list);
+    //     this.defaultCurrencies = [
+    //       {
+    //         name: this.fromEuro,
+    //         num: responseEuro.data.result.toFixed(2),
+    //       },
+    //       {
+    //         name: this.fromUSD,
+    //         num: responseUSD.data.result.toFixed(2),
+    //       },
+    //     ];
+    //     this.convert =
+    //       (await response.data.result).toFixed(2) + " " + toCurrency;
+    //   } catch (e) {
+    //     console.log("Error", e);
+    //   } finally {
+    //     this.currentExchange = true;
+    //     this.isPostsLoading = true;
+    //   }
+    // },
+    async fetchConverted() {
       try {
-        const amountNumber = this.amount;
-        const toCurrency = this.to;
-        const fromCurrency = this.from;
         const response = await axios.get(
-          `https://api.exchangerate.host/convert?from=${fromCurrency}&to=${toCurrency}&amount=${amountNumber}`
+          `https://api.exchangerate.host/latest?base=RUB`
         );
-        const responseBaseCurrency = await axios.get(
-          `https://api.exchangerate.host/latest?base=${fromCurrency}`
-        );
-        console.log(responseBaseCurrency);
-        this.convert =
-          (await response.data.result).toFixed(2) + " " + toCurrency;
+        this.baseCurrencies = response.data.rates;
+        console.log(this.baseCurrencies);
       } catch (e) {
-        console.log("Error", e);
-      } finally {
-        this.currentExchange = true;
-        this.isPostsLoading = true;
+        alert("Converted Error", e);
       }
     },
     async fetchCurrencyList() {
@@ -240,6 +281,12 @@ export default {
   width: 100%;
 }
 
+.btn-addFetch2 {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
+}
+
 /* .current-exchange {
   float: left;
 } */
@@ -272,5 +319,10 @@ export default {
   display: flex;
   justify-content: flex-end;
   width: 50%;
+}
+
+.current-exchange__item {
+  margin: 8px 0;
+  border-bottom: 1px solid black;
 }
 </style>
