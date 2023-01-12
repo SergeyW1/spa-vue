@@ -25,27 +25,36 @@
             <div class="select-wrapper">
               <h4>To</h4>
               <select class="select" name="From" v-model="to">
-                <option v-for="(item, name, index) in currencies" :key="index">
-                  {{ name }} - {{ item }}
+                <option
+                  v-for="item in currencies"
+                  :key="item.currencies"
+                  selected
+                >
+                  {{ item.code }} - {{ item.description }}
                 </option>
               </select>
             </div>
             <div class="select-wrapper">
               <h4>From</h4>
-              <select class="select" name="Tos" v-model="from">
-                <option v-for="(item, name, index) in currencies" :key="index">
-                  {{ name }} - {{ item }}
+              <select class="select" name="to" v-model="from">
+                <option
+                  v-for="item in currencies"
+                  :key="item.currencies"
+                  selected
+                >
+                  {{ item.code }} - {{ item.description }}
                 </option>
               </select>
             </div>
           </div>
         </div>
         <div class="add-convert">
-          <div class="current-exchange" v-if="currentExchange">
-            {{ currentExchanges() }}
+          <div class="current-exchange" v-show="currentExchange">
+            {{ currentFirstCurrency() }}
           </div>
           <div class="btn-addFetch">
             <button class="btn" @click="fetchConverter">Convert</button>
+            <button class="btn" @click="fetchCurrencyList">Fetch</button>
           </div>
         </div>
       </div>
@@ -58,160 +67,9 @@ import axios from "axios";
 export default {
   data() {
     return {
-      currencies: {
-        AED: "United Arab Emirates dirham",
-        AFN: "Afghan afghani",
-        ALL: "Albanian lek",
-        AMD: "Armenian dram",
-        ANG: "Netherlands Antillean guilder",
-        AOA: "Angolan kwanza",
-        ARS: "Argentine peso",
-        AUD: "Australian dollar",
-        AWG: "Aruban florin",
-        AZN: "Azerbaijani manat",
-        BAM: "Bosnia and Herzegovina convertible mark",
-        BBD: "Barbadian dollar",
-        BDT: "Bangladeshi taka",
-        BGN: "Bulgarian lev",
-        BHD: "Bahraini dinar",
-        BIF: "Burundian franc",
-        BND: "Brunei dollar",
-        BOB: "Bolivian boliviano",
-        BRL: "Brazilian real",
-        BSD: "Bahamian dollar",
-        BWP: "Botswana pula",
-        BYN: "Belarusian ruble",
-        BZD: "Belize dollar",
-        CAD: "Canadian dollar",
-        CDF: "Congolese franc",
-        CHF: "Swiss franc",
-        CLP: "Chilean peso",
-        CNY: "Renminbi",
-        COP: "Colombian peso",
-        CRC: "Costa Rican colón",
-        CUP: "Cuban peso",
-        CVE: "Cape Verdean escudo",
-        CZK: "Czech koruna",
-        DJF: "Djiboutian franc",
-        DKK: "Danish krone",
-        DOP: "Dominican peso",
-        DZD: "Algerian dinar",
-        EGP: "Egyptian pound",
-        ERN: "Eritrean nakfa",
-        ETB: "Ethiopian birr",
-        EUR: "Euro",
-        FJD: "Fijian dollar",
-        GBP: "Pound sterling",
-        GEL: "Georgian lari",
-        GHS: "Ghanaian cedi",
-        GIP: "Gibraltar pound",
-        GMD: "Gambian dalasi",
-        GNF: "Guinean franc",
-        GTQ: "Guatemalan quetzal",
-        GYD: "Guyanese dollar",
-        HKD: "Hong Kong dollar",
-        HNL: "Honduran lempira",
-        HRK: "Croatian kuna",
-        HTG: "Haitian gourde",
-        HUF: "Hungarian forint",
-        IDR: "Indonesian rupiah",
-        ILS: "Israeli new shekel",
-        INR: "Indian rupee",
-        IQD: "Iraqi dinar",
-        IRR: "Iranian rial",
-        ISK: "Icelandic króna",
-        JMD: "Jamaican dollar",
-        JOD: "Jordanian dinar",
-        JPY: "Japanese yen",
-        KES: "Kenyan shilling",
-        KGS: "Kyrgyzstani som",
-        KHR: "Cambodian riel",
-        KMF: "Comorian franc",
-        KRW: "South Korean won",
-        KWD: "Kuwaiti dinar",
-        KZT: "Kazakhstani tenge",
-        LAK: "Lao kip",
-        LBP: "Lebanese pound",
-        LKR: "Sri Lankan rupee",
-        LRD: "Liberian dollar",
-        LSL: "Lesotho loti",
-        LYD: "Libyan dinar",
-        MAD: "Moroccan dirham",
-        MDL: "Moldovan leu",
-        MGA: "Malagasy ariary",
-        MKD: "Macedonian denar",
-        MMK: "Burmese kyat",
-        MNT: "Mongolian tögrög",
-        MOP: "Macanese pataca",
-        MRU: "Mauritanian ouguiya",
-        MUR: "Mauritian rupee",
-        MVR: "Maldivian rufiyaa",
-        MWK: "Malawian kwacha",
-        MXN: "Mexican peso",
-        MYR: "Malaysian ringgit",
-        MZN: "Mozambican metical",
-        NAD: "Namibian dollar",
-        NGN: "Nigerian naira",
-        NIO: "Nicaraguan córdoba",
-        NOK: "Norwegian krone",
-        NPR: "Nepalese rupee",
-        NZD: "New Zealand dollar",
-        OMR: "Omani rial",
-        PAB: "Panamanian balboa",
-        PEN: "Peruvian sol",
-        PGK: "Papua New Guinean kina",
-        PHP: "Philippine peso",
-        PKR: "Pakistani rupee",
-        PLN: "Polish złoty",
-        PYG: "Paraguayan guaraní",
-        QAR: "Qatari riyal",
-        RON: "Romanian leu",
-        RSD: "Serbian dinar",
-        RUB: "Russian ruble",
-        RWF: "Rwandan franc",
-        SAR: "Saudi riyal",
-        SBD: "Solomon Islands dollar",
-        SCR: "Seychellois rupee",
-        SDG: "Sudanese pound",
-        SEK: "Swedish krona",
-        SGD: "Singapore dollar",
-        SLL: "Sierra Leonean leone",
-        SOS: "Somali shilling",
-        SRD: "Surinamese dollar",
-        SSP: "South Sudanese pound",
-        STN: "São Tomé and Príncipe dobra",
-        SVC: "Salvadoran colón",
-        SYP: "Syrian pound",
-        SZL: "Swazi lilangeni",
-        THB: "Thai baht",
-        TJS: "Tajikistani somoni",
-        TMT: "Turkmenistan manat",
-        TND: "Tunisian dinar",
-        TOP: "Tongan paanga",
-        TRY: "Turkish lira",
-        TTD: "Trinidad and Tobago dollar",
-        TWD: "New Taiwan dollar",
-        TZS: "Tanzanian shilling",
-        UAH: "Ukrainian hryvnia",
-        UGX: "Ugandan shilling",
-        USD: "United States dollar",
-        UYU: "Uruguayan peso",
-        UZS: "Uzbekistani som",
-        VES: "Venezuelan bolívar",
-        VND: "Vietnamese đồng",
-        VUV: "Vanuatu vatu",
-        WST: "Samoan tālā",
-        XAF: "Central African CFA franc",
-        XCD: "Eastern Caribbean dollar",
-        XDR: "Special drawing rights",
-        XOF: "West African CFA franc",
-        XPF: "CFP franc",
-        YER: "Yemeni rial",
-        ZAR: "South African rand",
-        ZMW: "Zambian kwacha",
-        ZWL: "Zimbabwean dollar",
-      },
+      currencies: [],
       currentExchange: false,
+      text: "",
       isPostsLoading: true,
       isSelectLoading: true,
       convertNum: 0,
@@ -219,26 +77,20 @@ export default {
       amount: "1",
       to: "RUB - Russian Ruble",
       from: "USD - United States Dollar",
-      requestOptions: {
-        method: "GET",
-        redirect: "follow",
-        headers: {
-          "X-RapidAPI-Key":
-            "81b2de6304mshe561875616e62adp10f56djsn6a23772b0ad8",
-          "X-RapidAPI-Host": "currency-converter5.p.rapidapi.com",
-        },
-      },
     };
   },
   methods: {
-    currentExchanges() {
-      return `${this.amount} ${this.from
-        .split("")
-        .slice(0, 3)
-        .join("")} ${this.convertNum.toFixed(2)} ${this.to
-        .split("")
-        .slice(0, 3)
-        .join("")}`;
+    currentFirstCurrency() {
+      return `${this.amount} 
+				${this.from.split("").slice(0, 3).join("")} = 
+				${this.convertNum.toFixed(2)} 
+				${this.to.split("").slice(0, 3).join("")}`;
+    },
+    currentSecondCurrency() {
+      return `${this.amount} 
+				${this.from.split("").slice(0, 3).join("")} = 
+				${this.convertNum.toFixed(2)} 
+				${this.to.split("").slice(0, 3).join("")}`;
     },
     async fetchConverter() {
       this.isPostsLoading = false;
@@ -258,6 +110,18 @@ export default {
         this.isPostsLoading = true;
       }
     },
+    async fetchCurrencyList() {
+      try {
+        const response = await axios("https://api.exchangerate.host/symbols");
+        console.log(response.data.symbols);
+        this.currencies = response.data.symbols;
+      } catch (e) {
+        alert("List Error", e);
+      }
+    },
+  },
+  mounted() {
+    this.fetchCurrencyList();
   },
 };
 </script>
@@ -380,18 +244,16 @@ export default {
 }
 
 .btn-addFetch {
-  /* display: flex;
+  display: flex;
   justify-content: flex-end;
-  width: 75%; */
-  float: right;
 }
 
-.current-exchange {
+/* .current-exchange {
   float: left;
-}
+} */
 
 .add-convert {
-  /* display: flex; */
+  display: flex;
   align-items: center;
   justify-content: space-between;
   font-family: Inter, sans-serif;
