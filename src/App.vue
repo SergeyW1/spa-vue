@@ -92,7 +92,7 @@ export default {
         );
         console.log(responseBaseCurrency);
         this.convert =
-          (await response.data.result).toFixed(4) + " " + toCurrency;
+          (await response.data.result).toFixed(2) + " " + toCurrency;
       } catch (e) {
         console.log("Error", e);
       } finally {
@@ -237,6 +237,7 @@ export default {
 .btn-addFetch {
   display: flex;
   justify-content: flex-end;
+  width: 100%;
 }
 
 /* .current-exchange {
