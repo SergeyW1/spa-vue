@@ -49,7 +49,10 @@
           </div>
         </div>
         <div class="add-convert">
-          <div class="current-exchange" v-show="currentExchange"></div>
+          <div class="current-exchange" v-if="currentExchange">
+            <span>{{ amount }} USD = {{ resultUSD }}</span>
+            <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
+          </div>
           <div :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch2'">
             <button class="btn" @click="fetchConverted">Converted</button>
           </div>
@@ -72,7 +75,11 @@ export default {
       toCurrency: "RUB",
       fromCurrency: "USD",
       result: 0,
+      resultEUR: 0,
+      resultUSD: 0,
       description: "",
+      fromEUR: "EUR",
+      fromUSD: "USD",
     };
   },
   methods: {
@@ -86,13 +93,14 @@ export default {
           `https://api.exchangerate.host/latest?base=${fromCurrency}`
         );
         const rates = await response.data.rates;
-        console.log(rates);
         this.result = amount * rates[toCurrency];
       } catch (e) {
         alert("Converted Error", e);
       } finally {
+        this.fetchCurrencyDefault();
         this.description = this.currencies[this.toCurrency].description;
         this.isPostsLoading = true;
+        this.currentExchange = true;
       }
     },
     async fetchCurrencyList() {
@@ -105,6 +113,18 @@ export default {
         alert("List Error", e);
       }
     },
+    async fetchCurrencyDefault() {
+      const responseEUR = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromEUR}`
+      );
+      const responseUSD = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromUSD}`
+      );
+      const ratesEUR = responseEUR.data.rates;
+      const ratesUSD = responseUSD.data.rates;
+      this.resultEUR = this.amount * ratesEUR["RUB"];
+      this.resultUSD = this.amount * ratesUSD["RUB"];
+    },
   },
   computed: {
     formValid() {
@@ -113,6 +133,7 @@ export default {
     },
   },
   mounted() {
+    this.fetchCurrencyDefault();
     this.fetchCurrencyList();
   },
 };
@@ -286,5 +307,12 @@ export default {
 .current-exchange__item {
   margin: 8px 0;
   border-bottom: 1px solid black;
+}
+
+.current-exchange {
+  display: flex;
+  flex-direction: column;
+  height: 45px;
+  justify-content: space-between;
 }
 </style>
