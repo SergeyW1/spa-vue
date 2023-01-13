@@ -50,7 +50,8 @@
         </div>
         <div class="add-convert">
           <div class="current-exchange" v-if="currentExchange">
-            <span>{{ amount }} USD = {{ resultUSD }}</span>
+            <h4>Курсы валют национальных банков</h4>
+            <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
             <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
           </div>
           <div :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch2'">
@@ -279,6 +280,7 @@ export default {
   align-items: center;
   justify-content: space-between;
   font-family: Inter, sans-serif;
+  height: 90px;
 }
 
 .entry-field__title {
@@ -310,9 +312,11 @@ export default {
 }
 
 .current-exchange {
+  animation: ani 2.5s forwards;
+  font-family: inherit;
   display: flex;
   flex-direction: column;
-  height: 45px;
+  height: 70px;
   justify-content: space-between;
 }
 </style>
