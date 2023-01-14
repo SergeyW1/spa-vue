@@ -17,7 +17,7 @@
     </div>
     <div class="currency-fields">
       <div class="select-wrapper">
-        <h4>To</h4>
+        <h4>Tos</h4>
         <select class="select" v-model="toCurrency">
           <option :value="item.code" v-for="item of currencies" :key="item">
             {{ item.code }} - {{ item.description }}
