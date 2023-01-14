@@ -1,5 +1,7 @@
 # spa-vue
 
+## URL: https://sergeyw1.github.io/spa-vue/
+
 ## Project setup
 ```
 npm install
