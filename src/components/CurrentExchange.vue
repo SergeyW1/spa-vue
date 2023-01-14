@@ -21,6 +21,7 @@ export default {
   components: { MyButtons },
   props: {
     amount: Number,
+    currentExchange: Boolean,
   },
 };
 </script>
