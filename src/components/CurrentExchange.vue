@@ -5,7 +5,7 @@
         !currentExchange ? 'current-exchange' : 'current-exchange__active'
       "
     >
-      <h4>Курсы валют национальных банков</h4>
+      <h4>Курсы валют национальных банков!</h4>
       <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
       <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
     </div>
