@@ -1,39 +1,47 @@
 <template>
-  <div class="add-convert">
-    <div
-      :class="
-        !currentExchange ? 'current-exchange' : 'current-exchange__active'
-      "
-    >
-      <h4>Курсы валют национальных банков!</h4>
-      <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
-      <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
-    </div>
-    <div :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch2'">
-      <my-buttons class="btn" @click="fetchConverted">Converted</my-buttons>
-    </div>
+  <div
+    :class="!currentExchange ? 'current-exchange' : 'current-exchange__active'"
+  >
+    <h4>Курсы валют национальных банков!</h4>
+    <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
+    <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
   </div>
 </template>
 
 <script>
-import MyButtons from "./MyButtons.vue";
+import axios from "axios";
 export default {
-  components: { MyButtons },
+  data() {
+    return {
+      fromEUR: "EUR",
+      fromUSD: "USD",
+      resultEUR: 0,
+      resultUSD: 0,
+    };
+  },
   props: {
     amount: Number,
     currentExchange: Boolean,
+  },
+  methods: {
+    async fetchCurrencyDefault() {
+      const responseEUR = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromEUR}`
+      );
+      const responseUSD = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromUSD}`
+      );
+      const ratesEUR = responseEUR.data.rates;
+      const ratesUSD = responseUSD.data.rates;
+      this.resultEUR = this.amount * ratesEUR.RUB;
+      this.resultUSD = this.amount * ratesUSD.RUB;
+      this.$emit("currency-default", this.fetchCurrencyDefault);
+    },
   },
 };
 </script>
 
 <style scoped>
-.add-convert {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-family: Inter, sans-serif;
-  height: 90px;
-}
 .current-exchange__item {
   margin: 8px 0;
   border-bottom: 1px solid black;
@@ -56,7 +64,7 @@ export default {
   width: 100%;
 }
 
-.btn-addFetch2 {
+.btn-addFetch__active {
   display: flex;
   justify-content: flex-end;
   width: 50%;

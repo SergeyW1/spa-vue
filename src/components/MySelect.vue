@@ -1,36 +1,51 @@
 <template>
-  <div class="spa-conteiner__inputs">
-    <div class="entry-field">
-      <div>
-        <h4>Amount</h4>
-        <input class="input" type="text" v-model.number="amount" />
+  <div class="spa-list" @submit.prevent>
+    <div class="spa-conteiner">
+      <div class="spa-conteiner__title">
+        <h1>Currency Converter</h1>
       </div>
-      <div v-if="isPostsLoading" class="entry-field__title">
-        <p class="entry-field__name">
-          {{ result !== "" ? description : "" }}
-        </p>
-        <span
-          >{{ amount }} {{ fromCurrency }} = {{ result.toFixed(4) }}
-          {{ toCurrency }}</span
+      <div class="spa-conteiner__inputs">
+        <div class="entry-field">
+          <div>
+            <h4>Amount</h4>
+            <input class="input" type="text" v-model.number="amount" />
+          </div>
+          <div v-if="isPostsLoading" class="entry-field__title">
+            <p class="entry-field__name">
+              {{ result !== "" ? description : "" }}
+            </p>
+            <span
+              >{{ amount }} {{ fromCurrency }} = {{ result.toFixed(4) }}
+              {{ toCurrency }}</span
+            >
+          </div>
+        </div>
+        <div class="currency-fields">
+          <div class="select-wrapper">
+            <h4>Tos</h4>
+            <select class="select" v-model="toCurrency">
+              <option :value="item.code" v-for="item of currencies" :key="item">
+                {{ item.code }} - {{ item.description }}
+              </option>
+            </select>
+          </div>
+          <div class="select-wrapper">
+            <h4>From</h4>
+            <select class="select" v-model="fromCurrency">
+              <option :value="item.code" v-for="item of currencies" :key="item">
+                {{ item.code }} - {{ item.description }}
+              </option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="add-convert">
+        <current-exchange @currency-default="currencyDefault" />
+        <div
+          :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch__active'"
         >
-      </div>
-    </div>
-    <div class="currency-fields">
-      <div class="select-wrapper">
-        <h4>Tos</h4>
-        <select class="select" v-model="toCurrency">
-          <option :value="item.code" v-for="item of currencies" :key="item">
-            {{ item.code }} - {{ item.description }}
-          </option>
-        </select>
-      </div>
-      <div class="select-wrapper">
-        <h4>From</h4>
-        <select class="select" v-model="fromCurrency">
-          <option :value="item.code" v-for="item of currencies" :key="item">
-            {{ item.code }} - {{ item.description }}
-          </option>
-        </select>
+          <my-buttons @click="fetchConverted">Converted</my-buttons>
+        </div>
       </div>
     </div>
   </div>
@@ -38,7 +53,10 @@
 
 <script>
 import axios from "axios";
+import CurrentExchange from "./CurrentExchange.vue";
+import MyButtons from "./MyButtons.vue";
 export default {
+  components: { CurrentExchange, MyButtons },
   data() {
     return {
       currencies: [],
@@ -49,11 +67,7 @@ export default {
       toCurrency: "RUB",
       fromCurrency: "USD",
       result: 0,
-      resultEUR: 0,
-      resultUSD: 0,
       description: "",
-      fromEUR: "EUR",
-      fromUSD: "USD",
     };
   },
   methods: {
@@ -71,7 +85,7 @@ export default {
       } catch (e) {
         alert("Converted Error", e);
       } finally {
-        this.fetchCurrencyDefault();
+        this.currencyDefault();
         this.description = this.currencies[this.toCurrency].description;
         this.isPostsLoading = true;
         this.currentExchange = true;
@@ -87,17 +101,8 @@ export default {
         alert("List Error", e);
       }
     },
-    async fetchCurrencyDefault() {
-      const responseEUR = await axios.get(
-        `https://api.exchangerate.host/latest?base=${this.fromEUR}`
-      );
-      const responseUSD = await axios.get(
-        `https://api.exchangerate.host/latest?base=${this.fromUSD}`
-      );
-      const ratesEUR = responseEUR.data.rates;
-      const ratesUSD = responseUSD.data.rates;
-      this.resultEUR = this.amount * ratesEUR["RUB"];
-      this.resultUSD = this.amount * ratesUSD["RUB"];
+    currencyDefault() {
+      return this.fetchCurrencyDefault();
     },
   },
   mounted() {
@@ -113,6 +118,26 @@ export default {
 </script>
 
 <style scoped>
+.spa-list {
+  font-family: "Comfortaa", cursive;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 50em;
+  margin: 0 auto;
+  max-width: 400px;
+}
+
+.spa-conteiner {
+  background: #efedd5;
+  padding: 40px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px 0 rgb(0 0 0 / 20%);
+}
+
+.spa-conteiner__title {
+  text-align: center;
+}
 .input {
   padding: 15px;
   border: 2px solid #14509b;
@@ -191,5 +216,12 @@ export default {
   align-items: flex-end;
   gap: 15px;
   height: 70%;
+}
+.add-convert {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-family: Inter, sans-serif;
+  height: 90px;
 }
 </style>
