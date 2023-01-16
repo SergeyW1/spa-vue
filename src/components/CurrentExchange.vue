@@ -1,7 +1,5 @@
-<template>
-  <div
-    :class="!currentExchange ? 'current-exchange' : 'current-exchange__active'"
-  >
+<!-- <template>
+  <div>
     <h4>Курсы валют национальных банков!</h4>
     <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
     <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
@@ -21,8 +19,8 @@ export default {
   },
   props: {
     amount: Number,
-    currentExchange: Boolean,
   },
+  emits: ["currencyDefault"],
   methods: {
     async fetchCurrencyDefault() {
       const responseEUR = await axios.get(
@@ -35,7 +33,7 @@ export default {
       const ratesUSD = responseUSD.data.rates;
       this.resultEUR = this.amount * ratesEUR.RUB;
       this.resultUSD = this.amount * ratesUSD.RUB;
-      this.$emit("currency-default", this.fetchCurrencyDefault);
+      this.$emit("currencyDefault", this.fetchCurrencyDefault);
     },
   },
 };
@@ -69,4 +67,4 @@ export default {
   justify-content: flex-end;
   width: 50%;
 }
-</style>
+</style> -->

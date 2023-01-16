@@ -40,10 +40,7 @@
         </div>
       </div>
       <div class="add-convert">
-        <current-exchange @currency-default="currencyDefault" />
-        <div
-          :class="!currentExchange ? 'btn-addFetch' : 'btn-addFetch__active'"
-        >
+        <div>
           <my-buttons @click="fetchConverted">Converted</my-buttons>
         </div>
       </div>
@@ -53,10 +50,9 @@
 
 <script>
 import axios from "axios";
-import CurrentExchange from "./CurrentExchange.vue";
 import MyButtons from "./MyButtons.vue";
 export default {
-  components: { CurrentExchange, MyButtons },
+  components: { MyButtons },
   data() {
     return {
       currencies: [],
@@ -85,7 +81,6 @@ export default {
       } catch (e) {
         alert("Converted Error", e);
       } finally {
-        this.currencyDefault();
         this.description = this.currencies[this.toCurrency].description;
         this.isPostsLoading = true;
         this.currentExchange = true;
@@ -100,9 +95,6 @@ export default {
       } catch (e) {
         alert("List Error", e);
       }
-    },
-    currencyDefault() {
-      return this.fetchCurrencyDefault();
     },
   },
   mounted() {
