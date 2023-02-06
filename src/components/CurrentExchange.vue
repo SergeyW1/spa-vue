@@ -1,40 +1,25 @@
-<!-- <template>
-  <div>
-    <h4>Курсы валют национальных банков!</h4>
-    <span>{{ amount }} USD = {{ resultUSD }} RUB</span>
-    <span>{{ amount }} EUR = {{ resultEUR }} RUB</span>
+<template>
+  <div
+    :class="isPostsLoading ? 'current-exchange__active' : 'current-exchange'"
+  >
+    <div class="current-exchange__item">
+      <h3>Курсы валют национальных банков!</h3>
+      <div class="current-currencies">
+        <span>{{ amount }} USD = {{ resultUSD.toFixed(4) }} RUB</span>
+        <span>{{ amount }} EUR = {{ resultEUR.toFixed(4) }} RUB</span>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import axios from "axios";
 export default {
-  data() {
-    return {
-      fromEUR: "EUR",
-      fromUSD: "USD",
-      resultEUR: 0,
-      resultUSD: 0,
-    };
-  },
+  name: "current-exchange",
   props: {
     amount: Number,
-  },
-  emits: ["currencyDefault"],
-  methods: {
-    async fetchCurrencyDefault() {
-      const responseEUR = await axios.get(
-        `https://api.exchangerate.host/latest?base=${this.fromEUR}`
-      );
-      const responseUSD = await axios.get(
-        `https://api.exchangerate.host/latest?base=${this.fromUSD}`
-      );
-      const ratesEUR = responseEUR.data.rates;
-      const ratesUSD = responseUSD.data.rates;
-      this.resultEUR = this.amount * ratesEUR.RUB;
-      this.resultUSD = this.amount * ratesUSD.RUB;
-      this.$emit("currencyDefault", this.fetchCurrencyDefault);
-    },
+    isPostsLoading: Boolean,
+    resultEUR: Number,
+    resultUSD: Number,
   },
 };
 </script>
@@ -44,27 +29,29 @@ export default {
   margin: 8px 0;
   border-bottom: 1px solid black;
 }
+
+.current-currencies {
+  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 50px;
+  justify-content: space-evenly;
+}
+
 .current-exchange__active {
   opacity: 1;
   font-family: inherit;
   display: flex;
   flex-direction: column;
-  height: 70px;
+  height: 110px;
   justify-content: space-between;
+  color: rgb(46, 60, 87);
+  font-weight: 600;
+  transition: ease 0.5s;
 }
 .current-exchange {
   visibility: hidden;
   opacity: 0;
+  font-weight: 600;
 }
-.btn-addFetch {
-  display: flex;
-  justify-content: flex-end;
-  width: 100%;
-}
-
-.btn-addFetch__active {
-  display: flex;
-  justify-content: flex-end;
-  width: 50%;
-}
-</style> -->
+</style>

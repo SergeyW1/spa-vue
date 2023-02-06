@@ -10,7 +10,11 @@
             <h4>Amount</h4>
             <input class="input" type="text" v-model.number="amount" />
           </div>
-          <div v-if="isPostsLoading" class="entry-field__title">
+          <div
+            :class="
+              isPostsLoading ? 'entry-field__title' : 'entry-field__no-active'
+            "
+          >
             <p class="entry-field__name">
               {{ result !== "" ? description : "" }}
             </p>
@@ -40,7 +44,13 @@
         </div>
       </div>
       <div class="add-convert">
-        <div>
+        <current-exchange
+          :isPostsLoading="isPostsLoading"
+          :amount="amount"
+          :resultEUR="resultEUR"
+          :resultUSD="resultUSD"
+        />
+        <div :class="currentExchange ? 'btn-addFetch' : 'btn-addFetch__active'">
           <my-buttons @click="fetchConverted">Converted</my-buttons>
         </div>
       </div>
@@ -51,10 +61,15 @@
 <script>
 import axios from "axios";
 import MyButtons from "./MyButtons.vue";
+import CurrentExchange from "./CurrentExchange.vue";
 export default {
-  components: { MyButtons },
+  components: { MyButtons, CurrentExchange },
   data() {
     return {
+      fromEUR: "EUR",
+      fromUSD: "USD",
+      resultEUR: 0,
+      resultUSD: 0,
       currencies: [],
       currentExchange: false,
       isPostsLoading: false,
@@ -84,6 +99,7 @@ export default {
         this.description = this.currencies[this.toCurrency].description;
         this.isPostsLoading = true;
         this.currentExchange = true;
+        this.fetchCurrencyDefault();
       }
     },
     async fetchCurrencyList() {
@@ -95,6 +111,18 @@ export default {
       } catch (e) {
         alert("List Error", e);
       }
+    },
+    async fetchCurrencyDefault() {
+      const responseEUR = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromEUR}`
+      );
+      const responseUSD = await axios.get(
+        `https://api.exchangerate.host/latest?base=${this.fromUSD}`
+      );
+      const ratesEUR = responseEUR.data.rates;
+      const ratesUSD = responseUSD.data.rates;
+      this.resultEUR = this.amount * ratesEUR.RUB;
+      this.resultUSD = this.amount * ratesUSD.RUB;
     },
   },
   mounted() {
@@ -149,14 +177,23 @@ export default {
   font-weight: 500;
 }
 .entry-field__title {
+  height: 97px;
+  opacity: 1;
   position: relative;
-  margin-top: 30px;
   display: flex;
-  justify-content: flex-start;
   font-weight: 600;
   color: rgb(46, 60, 87);
   font-size: 21px;
   flex-direction: column;
+  transition: ease 0.5s;
+  justify-content: center;
+}
+
+.entry-field__no-active {
+  opacity: 0;
+  visibility: hidden;
+  font-weight: 600;
+  font-size: 21px;
 }
 
 .entry-field__name {
@@ -197,7 +234,7 @@ export default {
   right: 8px;
   width: 20px;
   height: 20px;
-  background-image: url(./assets/arrow-short-down.svg);
+  background-image: url(../assets/arrow-short-down.svg);
   background-repeat: no-repeat;
   background-size: 100%;
 }
@@ -215,5 +252,17 @@ export default {
   justify-content: space-between;
   font-family: Inter, sans-serif;
   height: 90px;
+}
+
+.btn-addFetch {
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.btn-addFetch__active {
+  display: flex;
+  justify-content: flex-end;
+  width: 50%;
 }
 </style>
