@@ -1,6 +1,13 @@
-# spa-vue
+Currency conversion app. In this application, you can:
+
+- Calculate conversions with a choice of more than a hundred currencies.
+- Dollar and euro to ruble conversion
 
 ## URL: https://sergeyw1.github.io/spa-vue/
+
+
+
+------------------------------------------------------------------------
 
 ## Project setup
 ```
