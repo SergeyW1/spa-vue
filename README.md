@@ -1,9 +1,9 @@
-# Currency conversion app. 
+# Приложение для конвертации валют.
 
-## In this application, you can:
+## В этом приложении вы можете:
 ```
-- Calculate conversions with a choice of more than a hundred currencies.
-- Dollar and euro to ruble conversion
+- Рассчитайте конверсии с выбором из более чем ста валют.
+- Конвертация доллара и евро в рубли
 ```
 ## URL: https://sergeyw1.github.io/spa-vue/
 
