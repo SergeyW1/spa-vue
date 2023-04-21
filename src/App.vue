@@ -4,11 +4,8 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import MySelect from "./components/MySelect.vue";
-export default {
-  components: { MySelect },
-};
 </script>
 
 <style>
